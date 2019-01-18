@@ -4,7 +4,7 @@ body {
   font-family: "Helvetica", "Georgia", sans-serif;
   line-height: 1.5;
   padding: 4em 1em;
-  color: #666;
+  color: #888;
   background-color: #10D7A5;
 }
 
@@ -14,5 +14,5 @@ h2 {
 }
 
 h1, h2, strong {
-  color: #777;
+  color: #111;
 }
