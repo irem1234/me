@@ -6,203 +6,108 @@
     <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
 </head>
 </div>
-<style>
-  #snowflakeContainer {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    display: none;
-  }
-
-  .snowflake {
-    position: fixed;
-    background-color: #CCC;
-    user-select: none;
-    z-index: 1000;
-    pointer-events: none;
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-  }
-</style>
-
-<div id="snowflakeContainer">
-  <span class="snowflake"></span>
-</div>
-
-<script>
-  // Array to store our Snowflake objects
-  var snowflakes = [];
-
-  // Global variables to store our browser's window size
-  var browserWidth;
-  var browserHeight;
-
-  // Specify the number of snowflakes you want visible
-  var numberOfSnowflakes = 400;
-
-  // Flag to reset the position of the snowflakes
-  var resetPosition = false;
-
-  // Handle accessibility
-  var enableAnimations = false;
-  var reduceMotionQuery = matchMedia("(prefers-reduced-motion)");
-
-  // Handle animation accessibility preferences 
-  function setAccessibilityState() {
-    if (reduceMotionQuery.matches) {
-      enableAnimations = false;
-    } else { 
-      enableAnimations = true;
-    }
-  }
-  setAccessibilityState();
-
-  reduceMotionQuery.addListener(setAccessibilityState);
-
-  //
-  // It all starts here...
-  //
-  function setup() {
-    if (enableAnimations) {
-      window.addEventListener("DOMContentLoaded", generateSnowflakes, false);
-      window.addEventListener("resize", setResetFlag, false);
-    }
-  }
-  setup();
-
-  //
-  // Constructor for our Snowflake object
-  //
-  function Snowflake(element, speed, xPos, yPos) {
-    // set initial snowflake properties
-    this.element = element;
-    this.speed = speed;
-    this.xPos = xPos;
-    this.yPos = yPos;
-    this.scale = 1;
-
-    // declare variables used for snowflake's motion
-    this.counter = 0;
-    this.sign = Math.random() < 0.5 ? 1 : -1;
-
-    // setting an initial opacity and size for our snowflake
-    this.element.style.opacity = (.1 + Math.random()) / 3;
-  }
-
-  //
-  // The function responsible for actually moving our snowflake
-  //
-  Snowflake.prototype.update = function () {
-    // using some trigonometry to determine our x and y position
-    this.counter += this.speed / 5000;
-    this.xPos += this.sign * this.speed * Math.cos(this.counter) / 40;
-    this.yPos += Math.sin(this.counter) / 40 + this.speed / 30;
-    this.scale = .5 + Math.abs(10 * Math.cos(this.counter) / 20);
-
-    // setting our snowflake's position
-    setTransform(Math.round(this.xPos), Math.round(this.yPos), this.scale, this.element);
-
-    // if snowflake goes below the browser window, move it back to the top
-    if (this.yPos > browserHeight) {
-      this.yPos = -50;
-    }
-  }
-
-  //
-  // A performant way to set your snowflake's position and size
-  //
-  function setTransform(xPos, yPos, scale, el) {
-    el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0) scale(${scale}, ${scale})`;
-  }
-
-  //
-  // The function responsible for creating the snowflake
-  //
-  function generateSnowflakes() {
-
-    // get our snowflake element from the DOM and store it
-    var originalSnowflake = document.querySelector(".snowflake");
-
-    // access our snowflake element's parent container
-    var snowflakeContainer = originalSnowflake.parentNode;
-    snowflakeContainer.style.display = "block";
-
-    // get our browser's size
-    browserWidth = document.documentElement.clientWidth;
-    browserHeight = document.documentElement.clientHeight;
-
-    // create each individual snowflake
-    for (var i = 0; i < numberOfSnowflakes; i++) {
-
-      // clone our original snowflake and add it to snowflakeContainer
-      var snowflakeClone = originalSnowflake.cloneNode(true);
-      snowflakeContainer.appendChild(snowflakeClone);
-
-      // set our snowflake's initial position and related properties
-      var initialXPos = getPosition(50, browserWidth);
-      var initialYPos = getPosition(50, browserHeight);
-      var speed = 5 + Math.random() * 40;
-
-      // create our Snowflake object
-      var snowflakeObject = new Snowflake(snowflakeClone,
-        speed,
-        initialXPos,
-        initialYPos);
-      snowflakes.push(snowflakeObject);
-    }
-
-    // remove the original snowflake because we no longer need it visible
-    snowflakeContainer.removeChild(originalSnowflake);
-
-    moveSnowflakes();
-  }
-
-  //
-  // Responsible for moving each snowflake by calling its update function
-  //
-  function moveSnowflakes() {
-
-    if (enableAnimations) {
-      for (var i = 0; i < snowflakes.length; i++) {
-        var snowflake = snowflakes[i];
-        snowflake.update();
-      }      
-    }
-
-    // Reset the position of all the snowflakes to a new value
-    if (resetPosition) {
-      browserWidth = document.documentElement.clientWidth;
-      browserHeight = document.documentElement.clientHeight;
-
-      for (var i = 0; i < snowflakes.length; i++) {
-        var snowflake = snowflakes[i];
-
-        snowflake.xPos = getPosition(50, browserWidth);
-        snowflake.yPos = getPosition(50, browserHeight);
-      }
-
-      resetPosition = false;
-    }
-
-    requestAnimationFrame(moveSnowflakes);
-  }
-
-  //
-  // This function returns a number between (maximum - offset) and (maximum + offset)
-  //
-  function getPosition(offset, size) {
-    return Math.round(-1 * offset + Math.random() * (size + 2 * offset));
-  }
-
-  //
-  // Trigger a reset of all the snowflakes' positions
-  //
-  function setResetFlag(e) {
-    resetPosition = true;
-  }
-</script>
 <body>
+<script type="text/javascript">
+
+/******************************************
+* Snow Effect Script- By Altan d.o.o. (http://www.altan.hr/snow/index.html)
+* Visit Dynamic Drive DHTML code library (http://www.dynamicdrive.com/) for full source code
+* Last updated Nov 9th, 05' by DD. This notice must stay intact for use
+******************************************/
+  function openwindow(){
+window.open("autumn_effect.htm","","width=350,height=500")
+}
+
+  //Configure below to change URL path to the snow image
+  var snowsrc="snow.gif"
+  // Configure below to change number of snow to render
+  var no = 10;
+  // Configure whether snow should disappear after x seconds (0=never):
+  var hidesnowtime = 0;
+  // Configure how much snow should drop down before fading ("windowheight" or "pageheight")
+  var snowdistance = "pageheight";
+
+///////////Stop Config//////////////////////////////////
+
+  var ie4up = (document.all) ? 1 : 0;
+  var ns6up = (document.getElementById&&!document.all) ? 1 : 0;
+
+	function iecompattest(){
+	return (document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body
+	}
+
+  var dx, xp, yp;    // coordinate and position variables
+  var am, stx, sty;  // amplitude and step variables
+  var i, doc_width = 800, doc_height = 600; 
+  
+  if (ns6up) {
+    doc_width = self.innerWidth;
+    doc_height = self.innerHeight;
+  } else if (ie4up) {
+    doc_width = iecompattest().clientWidth;
+    doc_height = iecompattest().clientHeight;
+  }
+
+  dx = new Array();
+  xp = new Array();
+  yp = new Array();
+  am = new Array();
+  stx = new Array();
+  sty = new Array();
+  snowsrc=(snowsrc.indexOf("dynamicdrive.com")!=-1)? "snow.gif" : snowsrc
+  for (i = 0; i < no; ++ i) {  
+    dx[i] = 0;                        // set coordinate variables
+    xp[i] = Math.random()*(doc_width-50);  // set position variables
+    yp[i] = Math.random()*doc_height;
+    am[i] = Math.random()*20;         // set amplitude variables
+    stx[i] = 0.02 + Math.random()/10; // set step variables
+    sty[i] = 0.7 + Math.random();     // set step variables
+		if (ie4up||ns6up) {
+      if (i == 0) {
+        document.write("<div id=\"dot"+ i +"\" style=\"POSITION: absolute; Z-INDEX: "+ i +"; VISIBILITY: visible; TOP: 15px; LEFT: 15px;\"><a href=\"http://dynamicdrive.com\"><img src='"+snowsrc+"' border=\"0\"><\/a><\/div>");
+      } else {
+        document.write("<div id=\"dot"+ i +"\" style=\"POSITION: absolute; Z-INDEX: "+ i +"; VISIBILITY: visible; TOP: 15px; LEFT: 15px;\"><img src='"+snowsrc+"' border=\"0\"><\/div>");
+      }
+    }
+  }
+
+  function snowIE_NS6() {  // IE and NS6 main animation function
+    doc_width = ns6up?window.innerWidth-10 : iecompattest().clientWidth-10;
+		doc_height=(window.innerHeight && snowdistance=="windowheight")? window.innerHeight : (ie4up && snowdistance=="windowheight")?  iecompattest().clientHeight : (ie4up && !window.opera && snowdistance=="pageheight")? iecompattest().scrollHeight : iecompattest().offsetHeight;
+	if (snowdistance=="windowheight"){
+		doc_height = window.innerHeight || iecompattest().clientHeight
+	}
+	else{
+		doc_height = iecompattest().scrollHeight
+	}
+    for (i = 0; i < no; ++ i) {  // iterate for every dot
+      yp[i] += sty[i];
+      if (yp[i] > doc_height-50) {
+        xp[i] = Math.random()*(doc_width-am[i]-30);
+        yp[i] = 0;
+        stx[i] = 0.02 + Math.random()/10;
+        sty[i] = 0.7 + Math.random();
+      }
+      dx[i] += stx[i];
+      document.getElementById("dot"+i).style.top=yp[i]+"px";
+      document.getElementById("dot"+i).style.left=xp[i] + am[i]*Math.sin(dx[i])+"px";  
+    }
+    snowtimer=setTimeout("snowIE_NS6()", 10);
+  }
+
+	function hidesnow(){
+		if (window.snowtimer) clearTimeout(snowtimer)
+		for (i=0; i<no; i++) document.getElementById("dot"+i).style.visibility="hidden"
+	}
+		
+
+if (ie4up||ns6up){
+    snowIE_NS6();
+		if (hidesnowtime>0)
+		setTimeout("hidesnow()", hidesnowtime*1000)
+		}
+
+</script>
 <marquee  style="color:black;" behavior="scroll" direction="left"> <b>  HOŞ GELDİNİZ!! </b> </marquee> 
 <header>
     <h1 align="center" style="color:red;">İrem Ersoy </h1>
